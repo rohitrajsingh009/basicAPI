@@ -5,7 +5,7 @@ import transporter from '../config/emailConfig.js';
 
 class UserController {
     static userRegistration = async (req,res)=>{
-        const {name,email, password, password_confirmation,tc} = req.body
+        const {name,email,phone, qualification,course, mode,address, dateOfJoining, password, password_confirmation,tc} = req.body
         const user = await UserModel.findOne({email:email})
         if(user){
             res.send({"status":"falied", "message":"email already exist"})
@@ -18,6 +18,12 @@ class UserController {
                     const doc = new UserModel({
                         name:name,
                         email:email,
+                        phone:phone,
+                        qualification:qualification,
+                        course:course,
+                        mode:mode,
+                        address:address,
+                        dateOfJoining:dateOfJoining,
                         password:hashPassword,
                         ts:tc
                     })
@@ -93,7 +99,7 @@ class UserController {
                 const secret = user._id+ process.env.JWT_SECRET_KEY;
                 const token = jwt.sign({userID:user._id},secret,{expiresIn:'15m'})
                             //  /api/user/reset/:id/:token
-                const link = `http://127.0.0.1:3000/api/user/reset/${user._id}/${token}`
+                const link = `http://localhost:4200/reset/${user._id}/${token}`
                 //console.log("link ",link)
                                //send email
                                let info = await transporter.sendMail({
