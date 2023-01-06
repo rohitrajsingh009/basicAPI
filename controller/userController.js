@@ -1,4 +1,5 @@
  import UserModel from '../models/User.js';
+ import ConnectModel from '../models/ContactUs.js'
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import transporter from '../config/emailConfig.js';
@@ -139,6 +140,31 @@ class UserController {
         } catch(err){
             res.send({'status':'failed',message:'invalid token'})
         }
+    }
+    static userConnect = async (req,res)=>{
+        const {name,email,phone,description} = req.body
+       
+            if(name && email && phone && description){
+              
+                  try{
+                    const doc = new ConnectModel({
+                        name:name,
+                        email:email,
+                        phone:phone,
+                        description:description,
+                    })
+                    await doc.save()
+                    const saved_query = await ConnectModel.findOne({email:email})
+                    //generate jwt token
+                    res.status(200).send({'success':true,saved_query,message:'query send successfully'})
+                  }catch(err){
+                    res.send({"status":"failed","message":err})
+                  }
+                
+            }else{
+                res.send({"status":"failed","message":"all fields are required" })
+            }
+        
     }
 }
 
